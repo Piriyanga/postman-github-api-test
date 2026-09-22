@@ -1,0 +1,654 @@
+{
+	"info": {
+		"_postman_id": "f82cddab-5798-4b6f-91c8-c40116c32a13",
+		"name": "GitHub API Automation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4465681"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "authenticated user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains a login\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    pm.expect(response).to.have.property(\"login\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains a user ID\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    pm.expect(response).to.have.property(\"id\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{githubToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.github+json",
+								"type": "text"
+							},
+							{
+								"key": "X-GitHub-Api-Version",
+								"value": "2022-11-28",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user repositories",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{githubToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.github+json",
+								"type": "text"
+							},
+							{
+								"key": "X-GitHub-Api-Version",
+								"value": "2022-11-28",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/user/repos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"repos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Repositories",
+			"item": [
+				{
+					"name": "Create repository",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{githubToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.github+json",
+								"type": "text"
+							},
+							{
+								"key": "X-GitHub-Api-Version",
+								"value": "2022-11-28",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"postman-github-api-test\",\r\n  \"description\": \"Repository created using Postman\",\r\n  \"private\": false,\r\n  \"has_issues\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/repos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"repos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get repository",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Repository response is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Repository name is correct\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    pm.expect(response.name).to.eql(pm.environment.get(\"testRepoName\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Repository belongs to the correct owner\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    pm.expect(response.owner.login).to.eql(\r",
+									"        pm.environment.get(\"githubOwner\")\r",
+									"    );\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{githubToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.github+json",
+								"type": "text"
+							},
+							{
+								"key": "X-GitHub-Api-Version",
+								"value": "2022-11-28",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/repos/{{githubOwner}}/{{testRepoName}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"repos",
+								"{{githubOwner}}",
+								"{{testRepoName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update repository",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{githubToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.github+json",
+								"type": "text"
+							},
+							{
+								"key": "X-GitHub-Api-Version",
+								"value": "2022-11-28",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"description\": \"Updated description from Postman\",\r\n  \"has_issues\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/repos/{{githubOwner}}/{{testRepoName}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"repos",
+								"{{githubOwner}}",
+								"{{testRepoName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete repository",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{githubToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.github+json",
+								"type": "text"
+							},
+							{
+								"key": "X-GitHub-Api-Version",
+								"value": "2022-11-28",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/repos/{{githubOwner}}/{{testRepoName}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"repos",
+								"{{githubOwner}}",
+								"{{testRepoName}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Issues",
+			"item": [
+				{
+					"name": "Piriyanga postman-github-api-test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Issue was created\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Issue response is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Issue has a number\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    pm.expect(response).to.have.property(\"number\");\r",
+									"    pm.expect(response.number).to.be.a(\"number\");\r",
+									"});\r",
+									"\r",
+									"const issue = pm.response.json();\r",
+									"\r",
+									"pm.environment.set(\"issueNumber\", issue.number);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{githubToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.github+json",
+								"type": "text"
+							},
+							{
+								"key": "X-GitHub-Api-Version",
+								"value": "2022-11-28",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Automated issue from Postman\",\r\n  \"body\": \"This issue was created using the GitHub API.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/repos/{{githubOwner}}/{{testRepoName}}/issues",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"repos",
+								"{{githubOwner}}",
+								"{{testRepoName}}",
+								"issues"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get issue",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{githubToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.github+json",
+								"type": "text"
+							},
+							{
+								"key": "X-GitHub-Api-Version",
+								"value": "2022-11-28",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/repos/{{githubOwner}}/{{testRepoName}}/issues/{{issueNumber}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"repos",
+								"{{githubOwner}}",
+								"{{testRepoName}}",
+								"issues",
+								"{{issueNumber}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update issue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Issue was updated\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Updated title is correct\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    pm.expect(response.title).to.eql(\"Updated issue from Postman\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{githubToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.github+json",
+								"type": "text"
+							},
+							{
+								"key": "X-GitHub-Api-Version",
+								"value": "2022-11-28",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Updated issue from Postman\",\r\n  \"body\": \"This issue was updated using the GitHub API.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/repos/{{githubOwner}}/{{testRepoName}}/issues/{{issueNumber}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"repos",
+								"{{githubOwner}}",
+								"{{testRepoName}}",
+								"issues",
+								"{{issueNumber}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Close issue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Issue was closed successfully\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Issue state is closed\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    pm.expect(response.state).to.eql(\"closed\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{githubToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.github+json",
+								"type": "text"
+							},
+							{
+								"key": "X-GitHub-Api-Version",
+								"value": "2022-11-28",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"state\": \"closed\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/repos/{{githubOwner}}/{{testRepoName}}/issues/{{issueNumber}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"repos",
+								"{{githubOwner}}",
+								"{{testRepoName}}",
+								"issues",
+								"{{issueNumber}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
